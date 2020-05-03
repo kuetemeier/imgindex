@@ -19,13 +19,47 @@ package app
 
 import (
 	"fmt"
+	"log"
+	"os"
 
+	"github.com/rwcarlsen/goexif/exif"
 	"github.com/spf13/viper"
+	"github.com/tidwall/gjson"
 )
 
 // Index start the index process
 func Index() {
+
+	var err error
+	var imgFile *os.File
+	var metaData *exif.Exif
+	var jsonByte []byte
+	var jsonString string
+
 	if viper.GetBool("verbose") {
 		fmt.Println("INFO: Starting index.")
 	}
+
+	imgFile, err = os.Open("sample/the-wall-sample.jpg")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	metaData, err = exif.Decode(imgFile)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	jsonByte, err = metaData.MarshalJSON()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	jsonString = string(jsonByte)
+	fmt.Println(jsonString)
+
+	fmt.Println("Make: " + gjson.Get(jsonString, "Make").String())
+	fmt.Println("Model: " + gjson.Get(jsonString, "Model").String())
+	fmt.Println("Software: " + gjson.Get(jsonString, "Software").String())
+
 }
