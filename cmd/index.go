@@ -20,6 +20,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/kuetemeier/imgmeta/app"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -54,4 +55,5 @@ func run(cmd *cobra.Command, args []string) {
 		fmt.Println("INFO: Indexing meta data.")
 	}
 
+	app.Index()
 }
