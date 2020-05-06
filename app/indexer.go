@@ -21,7 +21,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
+	meta "github.com/kuetemeier/imgmeta/app/meta"
 	"github.com/rwcarlsen/goexif/exif"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -61,5 +63,37 @@ func Index() {
 	fmt.Println("Make: " + gjson.Get(jsonString, "Make").String())
 	fmt.Println("Model: " + gjson.Get(jsonString, "Model").String())
 	fmt.Println("Software: " + gjson.Get(jsonString, "Software").String())
+
+	fhnd, err := os.Open("sample/the-wall-sample.jpg")
+	if err != nil {
+		return
+	}
+
+	image, err := meta.ReadJpeg(fhnd)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	basicInfo := GetBasicInfo(image)
+	fmt.Printf("Title: %v", basicInfo.Title)
+	fmt.Printf("Image: width:%v, height:%v\n", basicInfo.Width, basicInfo.Height)
+	fmt.Printf("Keywords: %v\n", basicInfo.Keywords)
+
+}
+
+func processSourceDir() {
+
+	err := filepath.Walk("sample",
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			fmt.Println(path, info.Size())
+			return nil
+		})
+	if err != nil {
+		log.Println(err)
+	}
 
 }

@@ -1,0 +1,23 @@
+source: ./sample
+destination: ./sample/imgindex.json
+fields:
+-
+  name: file
+  type: core
+  id: filenameRelative
+-
+  name: title
+  type: iptc
+  id: title
+-
+  name: description
+  type: iptc
+  id: description
+-
+  name: copyright
+  type: iptc
+  id: copyright
+-
+  name: test
+  type: iptc
+  id: 537

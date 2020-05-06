@@ -25,12 +25,45 @@ import (
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var cfgFile string
 
 var version = "0.1.0"
 var appName = "imgmeta"
+
+// any approach to require this configuration into your program.
+var yamlDefaultConfig = []byte(`
+fields:
+-
+  name: filename
+  type: core
+  id: filename
+-
+  name: filenameRel
+  type: core
+  id: filenameRelative
+-
+  name: version
+  type: core
+  id: version
+-
+  test: no other fields
+Hacker: true
+name: steve
+hobbies:
+- skateboarding
+- snowboarding
+- go
+clothing:
+  jacket: leather
+  trousers: denim
+age: 35
+eyes : brown
+beard: true
+`)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -57,6 +90,7 @@ func Execute() {
 }
 
 func init() {
+	initLog()
 	cobra.OnInitialize(initConfig)
 
 	// set config defaults
@@ -100,6 +134,9 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
+	viper.SetConfigType("yaml")
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -112,14 +149,62 @@ func initConfig() {
 		}
 
 		// Search config in home directory with name ".imgmeta" (without extension).
+		viper.AddConfigPath("/etc/imgmeta/")
 		viper.AddConfigPath(home)
-		viper.SetConfigName(".imgmeta")
+		viper.AddConfigPath(".")
+		viper.SetConfigName("imgmeta.yml")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
+	//viper.ReadConfig(bytes.NewBuffer(yamlDefaultConfig))
+
 	// If a config file is found, read it in.
 	err := viper.ReadInConfig()
+
+	configureLog()
+
+	type tField struct {
+		Name     string `mapstructure:"name"`
+		Type     string `mapstructure:"type"`
+		ID       string `mapstructure:"id"`
+		NewField string
+	}
+	//type tFields []tField
+	type tFields struct {
+		Collection []tField
+	}
+
+	//var fieldList tField
+	fieldList := make([]tField, 0)
+
+	//fmt.Println("%v", viper.Get("fields"))
+
+	fmt.Printf("fiels: %v", viper.Get("fields"))
+	fmt.Println()
+
+	err = viper.UnmarshalKey("fields", &fieldList)
+	if err != nil {
+		fmt.Printf("unable to decode into struct, %v", err)
+		fmt.Println()
+	}
+
+	var f tField
+	f = fieldList[0]
+
+	log.Info("Dies ist ein Info Log")
+
+	fmt.Printf("fieldList: %v", fieldList)
+	fmt.Println()
+
+	fmt.Printf("f: %v", f.ID)
+	fmt.Println()
+
+	os.Exit(0)
+
+	//mt.Println("%v", viper.Get("fields"))
+
+	os.Exit(0)
 
 	if viper.GetBool("silent") && viper.GetBool("verbose") {
 		os.Stderr.WriteString("ERROR: \"verbose\" and \"silent\" cannot be activated at the same time.\n")
@@ -127,14 +212,34 @@ func initConfig() {
 	}
 
 	if viper.GetBool("verbose") {
-		fmt.Println("INFO: Verbose mode: on - using " + appName + " version " + rootCmd.Version)
+		log.SetLevel(log.InfoLevel)
+		log.Info("Verbose mode: on - using " + appName + " version " + rootCmd.Version)
 
 		if err == nil {
-			fmt.Println("INFO: Using config file:", viper.ConfigFileUsed())
+			log.Info("Using config file:", viper.ConfigFileUsed())
 		} else {
-			fmt.Println("INFO: No config file in use.")
+			log.Info("No config file in use.")
 		}
 
 	}
 
+}
+
+// initLog initialize the logging system
+func initLog() {
+	// Log as JSON instead of the default ASCII formatter.
+	//log.SetFormatter(&log.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	log.SetLevel(log.WarnLevel)
+}
+
+// configures the logging system dynamically with custom config settings
+func configureLog() {
+	//log.SetFormatter(&log.JSONFormatter{})
+	log.SetLevel(log.InfoLevel)
 }
