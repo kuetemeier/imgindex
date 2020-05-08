@@ -18,11 +18,9 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/kuetemeier/imgmeta/app"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // indexCmd represents the filter command
@@ -30,7 +28,7 @@ var indexCmd = &cobra.Command{
 	Use:   "index",
 	Short: "(default) index meta data",
 	Long: `This is the default command.
-	
+
 	It can index image meta data to json.
 	`,
 	Run: run,
@@ -51,9 +49,7 @@ func init() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	if viper.GetBool("verbose") {
-		fmt.Println("INFO: Indexing meta data.")
-	}
+	log.Info("Indexing meta data.")
 
 	app.Index()
 }

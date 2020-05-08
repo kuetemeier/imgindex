@@ -97,9 +97,6 @@ func init() {
 
 	rootCmd.Version = version
 
-	viper.SetDefault("verbose", false)
-	viper.SetDefault("silent", false)
-
 	/*viper.SetDefault("input", "STDIN")
 	viper.SetDefault("output", "STDOUT")
 	viper.SetDefault("outputFormat", "rss")*/
@@ -112,17 +109,24 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.PersistentFlags().BoolP("silent", "s", false, "Silent no output, only errors")
+
+	viper.SetDefault("verbose", false)
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose, print additional informations")
+	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+
+	viper.SetDefault("silent", false)
+	rootCmd.PersistentFlags().BoolP("silent", "s", false, "Silent no output, only errors")
+	viper.BindPFlag("silent", rootCmd.PersistentFlags().Lookup("silent"))
+
+	viper.SetDefault("debug", false)
+	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug, print additional and debug informations")
+	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
 
 	//rootCmd.PersistentFlags().StringP("input", "i", "STDIN", "Input source (STDIN, File, URL) to read rss feed from")
 	//rootCmd.PersistentFlags().StringP("output", "o", "STDOUT", "Output destination to write the new rss stream")
 	//rootCmd.PersistentFlags().StringP("outputFormat", "f", "rss", "Output format (rss, atom or json)")
 
 	//rootCmd.PersistentFlags().StringP("count", "c", "-1", "Max numbers of feed entries in the output feed (-1 = infinate/same as input)")
-
-	viper.BindPFlag("silent", rootCmd.PersistentFlags().Lookup("silent"))
-	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 
 	//viper.BindPFlag("input", rootCmd.PersistentFlags().Lookup("input"))
 	//viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
@@ -164,54 +168,16 @@ func initConfig() {
 
 	configureLog()
 
-	type tField struct {
-		Name     string `mapstructure:"name"`
-		Type     string `mapstructure:"type"`
-		ID       string `mapstructure:"id"`
-		NewField string
-	}
-	//type tFields []tField
-	type tFields struct {
-		Collection []tField
-	}
-
-	//var fieldList tField
-	fieldList := make([]tField, 0)
-
-	//fmt.Println("%v", viper.Get("fields"))
-
-	fmt.Printf("fiels: %v", viper.Get("fields"))
-	fmt.Println()
-
-	err = viper.UnmarshalKey("fields", &fieldList)
-	if err != nil {
-		fmt.Printf("unable to decode into struct, %v", err)
-		fmt.Println()
-	}
-
-	var f tField
-	f = fieldList[0]
-
-	log.Info("Dies ist ein Info Log")
-
-	fmt.Printf("fieldList: %v", fieldList)
-	fmt.Println()
-
-	fmt.Printf("f: %v", f.ID)
-	fmt.Println()
-
-	os.Exit(0)
-
-	//mt.Println("%v", viper.Get("fields"))
-
-	os.Exit(0)
-
 	if viper.GetBool("silent") && viper.GetBool("verbose") {
-		os.Stderr.WriteString("ERROR: \"verbose\" and \"silent\" cannot be activated at the same time.\n")
+		log.Fatal("ERROR: \"verbose\" and \"silent\" config options cannot be activated at the same time.\n")
 		os.Exit(-1)
 	}
 
-	if viper.GetBool("verbose") {
+	if viper.GetBool("silent") && viper.GetBool("debug") {
+		log.Fatal("ERROR: \"debug\" and \"silent\" config options cannot be activated at the same time.\n")
+		os.Exit(-1)
+	}
+	if viper.GetBool("verbose") || viper.GetBool("debug") {
 		log.SetLevel(log.InfoLevel)
 		log.Info("Verbose mode: on - using " + appName + " version " + rootCmd.Version)
 
@@ -220,8 +186,15 @@ func initConfig() {
 		} else {
 			log.Info("No config file in use.")
 		}
-
 	}
+
+	if viper.GetBool("debug") {
+		log.SetLevel(log.DebugLevel)
+		//log.SetReportCaller(true)
+		log.Debug("Debugging Log-Level activated.")
+	}
+
+	processConfig()
 
 }
 
@@ -242,4 +215,41 @@ func initLog() {
 func configureLog() {
 	//log.SetFormatter(&log.JSONFormatter{})
 	log.SetLevel(log.InfoLevel)
+}
+
+func processConfig() {
+	type tField struct {
+		Name     string `mapstructure:"name"`
+		Type     string `mapstructure:"type"`
+		ID       string `mapstructure:"id"`
+		NewField string
+	}
+
+	//type tFields []tField
+	type tFields struct {
+		Collection []tField
+	}
+
+	//var fieldList tField
+	fieldList := make([]tField, 0)
+
+	//fmt.Println("%v", viper.Get("fields"))
+
+	log.Debugf("fiels: %v", viper.Get("fields"))
+	log.Debugln()
+
+	err := viper.UnmarshalKey("fields", &fieldList)
+	if err != nil {
+		log.Fatal("unable to decode 'fields' configuration into struct:", err)
+	}
+
+	var f tField
+	f = fieldList[0]
+
+	log.Debug("fieldList:", fieldList)
+
+	log.Debug("f: %v", f.ID)
+
+	//mt.Println("%v", viper.Get("fields"))
+
 }

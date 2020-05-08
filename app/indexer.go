@@ -32,6 +32,8 @@ import (
 // Index start the index process
 func Index() {
 
+	os.Exit(0)
+
 	var err error
 	var imgFile *os.File
 	var metaData *exif.Exif
