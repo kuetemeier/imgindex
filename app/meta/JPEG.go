@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+
+	"github.com/apex/log"
 )
 
 // ============================================== JPEG ==============================================
@@ -57,7 +59,7 @@ func ReadJpeg(fhnd *os.File) (image Image, err error) {
 			if app == nil {
 				break
 			}
-			fmt.Printf("Registering APP %s, Length:%v\n", app.Name(), app.Length())
+			log.Debug(fmt.Sprintf("Registering APP %s, Length:%v\n", app.Name(), app.Length()))
 			image.apps[app.Name()] = app
 
 		} else {

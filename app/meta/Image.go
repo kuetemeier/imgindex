@@ -13,7 +13,6 @@ type Image struct {
 // Examples:
 //             imageWidth := image.ReadTagValue("EXIF", TagImageWidth)
 //             imageHeight := image.ReadTagValue("EXIF", TagImageHeight)
-
 func (i Image) ReadTagValue(appname string, tagID uint16) (value interface{}, err error) {
 	app, exists := i.apps[appname]
 	if !exists {
@@ -34,6 +33,8 @@ const (
 	cICC  = 0xFFE2 // APP2, "ICC_PROFILE\x00"
 	cMETA = 0xFFE3 // APP3, "META\x00\x00" or "Meta\x00\x00"
 	cIPTC = 0xFFED // APP13, "Photoshop 3.0\x00"
+
+	cPINF = 0xFFEC // Picture Info
 
 	cSOF0  = 0xFFC0 // Start of Frame (baseline JPEG)
 	cSOF1  = 0xFFC1 // Start of Frame (baseline JPEG)
