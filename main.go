@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/kuetemeier/imgmeta/cmd"
+import "github.com/kuetemeier/imgindex/cmd"
 
 func main() {
 	cmd.Execute()

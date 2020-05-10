@@ -32,7 +32,7 @@ import (
 var cfgFile string
 
 var version = "0.1.0"
-var appName = "imgmeta"
+var appName = "imgindex"
 
 // any approach to require this configuration into your program.
 var yamlDefaultConfig = []byte(`
@@ -68,10 +68,13 @@ beard: true
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   appName,
-	Short: "A commandline tool written in GO to index image meta data.",
-	Long: `A commandline tool written in GO to index image meta data.
+	Short: "Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.",
+	Long: `Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.
 
-	You can e.g. use as a data source in HUGO websites.
+	It collects given (configured) fields of meta data from images stored in a directory
+	structure and writes them to a central JSON files.
+
+	You can use this JSON file e.g. as a data source in HUGO websites.
 	`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
@@ -105,7 +108,7 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.imgmeta.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.imgindex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
@@ -152,11 +155,11 @@ func initConfig() {
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".imgmeta" (without extension).
-		viper.AddConfigPath("/etc/imgmeta/")
+		// Search config in home directory with name ".imgindex" (without extension).
+		viper.AddConfigPath("/etc/imgindex/")
 		viper.AddConfigPath(home)
 		viper.AddConfigPath(".")
-		viper.SetConfigName("imgmeta.yml")
+		viper.SetConfigName("imgindex.yml")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match

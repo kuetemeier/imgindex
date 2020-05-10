@@ -1,4 +1,4 @@
-module github.com/kuetemeier/imgmeta
+module github.com/kuetemeier/imgindex
 
 go 1.14
 

@@ -3,7 +3,7 @@ package app
 import (
 	"fmt"
 
-	meta "github.com/kuetemeier/imgmeta/app/meta"
+	meta "github.com/kuetemeier/imgindex/app/meta"
 )
 
 // BasicInfo contains the most basic information that could be asked for

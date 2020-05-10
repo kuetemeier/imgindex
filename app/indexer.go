@@ -23,7 +23,7 @@ import (
 	"os"
 	"path/filepath"
 
-	meta "github.com/kuetemeier/imgmeta/app/meta"
+	meta "github.com/kuetemeier/imgindex/app/meta"
 	//"github.com/rwcarlsen/goexif/exif"
 )
 

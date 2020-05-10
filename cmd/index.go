@@ -18,7 +18,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/kuetemeier/imgmeta/app"
+	"github.com/kuetemeier/imgindex/app"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
