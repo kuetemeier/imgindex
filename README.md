@@ -32,5 +32,12 @@ limitations under the License.
 
 This projects make use of code and heavy work from:
 
-[Golang exif reader](https://github.com/jurgen-kluft/Golem) (MIT License)  
+- [Golang exif reader](https://github.com/jurgen-kluft/Golem) (MIT License)\
 Thank you Jurgen, without your code, I wouldn't have such a good starting point.
+- [Logrus](https://github.com/sirupsen/logrus)
+- [Viper](https://github.com/spf13/viper)
+- [Cobra](https://github.com/spf13/cobra)
+- [Ginko](https://github.com/onsi/ginkgo)
+- [Gomega](https://github.com/onsi/gomega)
+
+And many more OpenSource projects. Thank you all!
