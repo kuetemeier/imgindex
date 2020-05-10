@@ -1,4 +1,4 @@
-package meta
+package imgmeta
 
 /*
 Structure of a JFIF APP0 segment

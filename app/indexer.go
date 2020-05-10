@@ -23,55 +23,18 @@ import (
 	"os"
 	"path/filepath"
 
-	meta "github.com/kuetemeier/imgindex/app/meta"
-	//"github.com/rwcarlsen/goexif/exif"
+	"github.com/kuetemeier/imgindex/imgmeta"
 )
 
 // Index start the index process
 func Index() {
 
-	/*
-		os.Exit(0)
-
-		var err error
-		var imgFile *os.File
-		var metaData *exif.Exif
-		var jsonByte []byte
-		var jsonString string
-
-		if viper.GetBool("verbose") {
-			fmt.Println("INFO: Starting index.")
-		}
-
-		imgFile, err = os.Open("sample/the-wall-sample.jpg")
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		metaData, err = exif.Decode(imgFile)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		jsonByte, err = metaData.MarshalJSON()
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-
-		jsonString = string(jsonByte)
-		fmt.Println(jsonString)
-
-		fmt.Println("Make: " + gjson.Get(jsonString, "Make").String())
-		fmt.Println("Model: " + gjson.Get(jsonString, "Model").String())
-		fmt.Println("Software: " + gjson.Get(jsonString, "Software").String())
-	*/
-
-	fhnd, err := os.Open("sample/the-wall-sample.jpg")
+	fhnd, err := os.Open("testdata/the-wall-sample.jpg")
 	if err != nil {
 		return
 	}
 
-	image, err := meta.ReadJpeg(fhnd)
+	image, err := imgmeta.ReadJpeg(fhnd)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
