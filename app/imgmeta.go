@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/kuetemeier/imgindex/imgmeta"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // BasicInfo contains the most basic information that could be asked for
@@ -21,13 +23,13 @@ func GetBasicInfo(img imgmeta.Image) (info BasicInfo) {
 	if err == nil {
 		info.Width = width
 	} else {
-		fmt.Println(err.Error())
+		log.Error(err.Error())
 	}
 	height, err := img.ReadTagValue("SOF0", imgmeta.SOF0ImageHeight)
 	if err == nil {
 		info.Height = height.(uint32)
 	} else {
-		fmt.Println(err.Error())
+		log.Error(err.Error())
 	}
 	keyword, err := img.ReadTagValue("IPTC", imgmeta.IptcTagApplication2Keywords)
 	if err == nil {
@@ -35,14 +37,8 @@ func GetBasicInfo(img imgmeta.Image) (info BasicInfo) {
 	}
 	datetime, err := img.ReadTagValue("EXIF", imgmeta.ExifTagDateTimeOriginal)
 	if err == nil {
-		fmt.Printf("datetime:%v\n", datetime)
+		log.Info(fmt.Sprintf("datetime:%v\n", datetime))
 	}
-	//height, err := img.ReadTagValue("IPTC", IptcTagApplication2Keywords)
-	//if err == nil {
-	//	info.Height = height.(float64)
-	//} else {
-	//	fmt.Println(err.Error())
-	//}
 
 	imgTitle, err := img.ReadTagValue("IPTC", imgmeta.IptcTagApplication2Caption)
 	if err == nil {

@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math"
+
+	log "github.com/sirupsen/logrus"
 )
 
 /*
@@ -115,7 +117,7 @@ type ifdOffsetItem struct {
 }
 
 func (t tEXIFAPP) ReadValue(tagID2Find uint16) (interface{}, error) {
-	fmt.Printf("Read value of tag:0x%X in APP:EXIF\n", tagID2Find)
+	log.Debug(fmt.Sprintf("Read value of tag:0x%X in APP:EXIF\n", tagID2Find))
 
 	tiffOffset := uint32(10)
 	ifd0Offset := tiffOffset + t.TIFFOffsetToIFD0()
@@ -132,29 +134,23 @@ func (t tEXIFAPP) ReadValue(tagID2Find uint16) (interface{}, error) {
 		ifd := tExifIFD{offset: ifdItem.offset, appblock: t.block, endian: endian}
 		// How many fields does this IFD have ?
 		numberOfTags := ifd.NumberOfTags()
-		//fmt.Printf("Checking ifd:0x%X at offset:%d with %d fields\n", ifdItem.ifdType, ifdItem.offset, numberOfTags)
 
 		for i := uint32(0); i < numberOfTags; i++ {
 			tag := ifd.GetTag(i)
 			tagID := tag.TagID()
 
-			//fmt.Printf("Checking tag:0x%X at index:%d\n", tagID, i)
 			if tagID == tagID2Find {
-				//fmt.Printf("Found tag:0x%X in APP:EXIF at index %d\n", tagID, i)
 				return ifd.ReadValue(tag)
 			}
 
 			// IFD0, reading the offsets to the other IFD segments
 			if ifdItem.ifdType == cIFDZERO && tagID == cIFDEXIF {
-				//fmt.Printf("Found ifd:0x%X in APP:EXIF at index %d\n", tagID, i)
 				anotherIfdOffset := tiffOffset + tag.valueOrOffset()
 				ifdQueue = append(ifdQueue, ifdOffsetItem{offset: anotherIfdOffset, ifdType: cIFDEXIF})
 			} else if ifdItem.ifdType == cIFDZERO && tagID == cIFDGPS {
-				//fmt.Printf("Found gps:0x%X in APP:EXIF at index %d\n", tagID, i)
 				anotherIfdOffset := tiffOffset + tag.valueOrOffset()
 				ifdQueue = append(ifdQueue, ifdOffsetItem{offset: anotherIfdOffset, ifdType: cIFDGPS})
 			} else if ifdItem.ifdType == cIFDEXIF && tagID == cIFDINTEROP {
-				//fmt.Printf("Found iop:0x%X in APP:EXIF at index %d\n", tag, i)
 				anotherIfdOffset := tiffOffset + tag.valueOrOffset()
 				ifdQueue = append(ifdQueue, ifdOffsetItem{offset: anotherIfdOffset, ifdType: cIFDINTEROP})
 			}

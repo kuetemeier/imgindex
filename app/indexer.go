@@ -18,10 +18,10 @@ limitations under the License.
 package app
 
 import (
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/kuetemeier/imgindex/imgmeta"
 )
@@ -36,25 +36,25 @@ func Index() {
 
 	image, err := imgmeta.ReadJpeg(fhnd)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Error(err.Error())
 		return
 	}
 
 	basicInfo := GetBasicInfo(image)
-	fmt.Printf("Title: %v", basicInfo.Title)
-	fmt.Printf("Image: width:%v, height:%v\n", basicInfo.Width, basicInfo.Height)
-	fmt.Printf("Keywords: %v\n", basicInfo.Keywords)
+	log.Info("Title: %v", basicInfo.Title)
+	log.Info("Image: width:%v, height:%v\n", basicInfo.Width, basicInfo.Height)
+	log.Info("Keywords: %v\n", basicInfo.Keywords)
 
 }
 
 func processSourceDir() {
 
-	err := filepath.Walk("sample",
+	err := filepath.Walk("testdata",
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println(path, info.Size())
+			log.Println(path, info.Size())
 			return nil
 		})
 	if err != nil {

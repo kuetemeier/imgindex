@@ -31,8 +31,6 @@ func ReadJpeg(fhnd *os.File) (image Image, err error) {
 		return image, &exifError{"Wrong format"}
 	}
 
-	//fmt.Println("Reading JPEG APP segments")
-
 	appHeader := make([]byte, 2)
 	for true {
 		n, err = reader.Read(appHeader)
@@ -49,7 +47,6 @@ func ReadJpeg(fhnd *os.File) (image Image, err error) {
 			if !ok {
 				return image, &exifError{"Unidentified APP marker encountered"}
 			}
-			//fmt.Printf("Encountered marker %s\n", segment.name)
 
 			app, err := segment.reader(marker, reader)
 			if err != nil {

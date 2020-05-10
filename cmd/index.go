@@ -19,7 +19,6 @@ package cmd
 
 import (
 	"github.com/kuetemeier/imgindex/app"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -36,7 +35,7 @@ var indexCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(indexCmd)
+	RootCmd.AddCommand(indexCmd)
 
 	// Here you will define your flags and configuration settings.
 

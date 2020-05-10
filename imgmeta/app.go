@@ -3,6 +3,8 @@ package imgmeta
 import (
 	"encoding/binary"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var idJFIF = []byte{'J', 'F', 'I', 'F', 0}
@@ -44,21 +46,20 @@ func fAPPReadBlock(marker uint16, reader *JpegReader, extra uint32) (appblock []
 }
 
 func fAPPReadComment(marker uint16, reader *JpegReader) (a APP, err error) {
-	//fmt.Print("APP:COMMENT = ")
 	app := &tAPP{offset: 0, endian: binary.BigEndian}
 	app.block, err = fAPPReadBlock(marker, reader, 0)
 	comment := string(app.block[4:])
-	fmt.Println(comment)
+	log.Debug(comment)
 	return app, nil
 }
 
 func fAPPReadJFIF(app *tAPP) (err error) {
-	//fmt.Printf("APP:JFIF (length: %d)\n", len(app.block))
+	log.Debug(fmt.Sprintf("APP:JFIF (length: %d)\n", len(app.block)))
 	return nil
 }
 
 func fAPPReadJFXX(app *tAPP) (err error) {
-	//fmt.Printf("APP:JFXX (length: %d)\n", len(app.block))
+	log.Debug(fmt.Sprintf("APP:JFXX (length: %d)\n", len(app.block)))
 	return nil
 }
 
@@ -87,7 +88,6 @@ func fAPPReadAPP1(marker uint16, reader *JpegReader) (a APP, err error) {
 }
 
 func fAPPReadICCPROFILE(app *tAPP) (err error) {
-	//fmt.Printf("APP:ICC_PROFILE (length: %d)\n", len(app.block))
 	return nil
 }
 
@@ -104,7 +104,6 @@ func fAPPReadIPTC(marker uint16, reader *JpegReader) (a APP, err error) {
 	app := &tIPTCAPP{offset: 10, endian: binary.BigEndian}
 	app.block, err = fAPPReadBlock(marker, reader, 0)
 	if app.HasID(idIPTC) {
-		//fmt.Printf("APP:IPTC (length: %d)\n", len(app.block))
 		return app, nil
 	}
 	return app, &exifError{"APP13 has wrong identifier, should be 'Photoshop 3.0\000'"}
@@ -226,6 +225,6 @@ func (t tAPP) HasID(cid []byte) bool {
 }
 
 func (t tAPP) ReadValue(tagID2Find uint16) (interface{}, error) {
-	fmt.Printf("Read value of tag:0x%X in APP:BASIC\n", tagID2Find)
+	log.Debug(fmt.Sprintf("Read value of tag:0x%X in APP:BASIC\n", tagID2Find))
 	return int(0), nil
 }

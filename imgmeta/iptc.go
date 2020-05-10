@@ -4,6 +4,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 /*
@@ -191,7 +193,6 @@ func (t tIPTCAPP) ReadValue(tagID2Find uint16) (interface{}, error) {
 
 	// Valid header == 0x38 0x42 0x49 0x4d 0x04
 	for iptcHeader.HasValidHeader() {
-		// fmt.Printf("IPTC Header, name:%s, size:%v\n", iptcHeader.Name(), iptcHeader.RecordSize())
 
 		// @NOTE: There seem to be a lot of different IPTC record types, the only one
 		// that contains records is the 0x04 one (0x38 0x42 0x49 0x4d 0x04 0x04).
@@ -202,13 +203,13 @@ func (t tIPTCAPP) ReadValue(tagID2Find uint16) (interface{}, error) {
 				field, ok := aIPTCFields[fieldID]
 				if ok {
 					if field.fieldTypeID == IptcFieldTypeShort {
-						fmt.Printf("IPTC tag:%v, type:'short', value:%v\n", fieldID, recordReader.ReadShort())
+						log.Debug(fmt.Sprintf("IPTC tag:%v, type:'short', value:%v\n", fieldID, recordReader.ReadShort()))
 					} else if field.fieldTypeID == IptcFieldTypeString {
-						fmt.Printf("IPTC tag:%v, type:'string', value:%v\n", fieldID, recordReader.ReadString())
+						log.Debug(fmt.Sprintf("IPTC tag:%v, type:'string', value:%v\n", fieldID, recordReader.ReadString()))
 					} else if field.fieldTypeID == IptcFieldTypeDate {
-						fmt.Printf("IPTC tag:%v, type:'date', value:%v\n", fieldID, recordReader.ReadDate())
+						log.Debug(fmt.Sprintf("IPTC tag:%v, type:'date', value:%v\n", fieldID, recordReader.ReadDate()))
 					} else if field.fieldTypeID == IptcFieldTypeTime {
-						fmt.Printf("IPTC tag:%v, type:'time', value:%v\n", fieldID, recordReader.ReadTime())
+						log.Debug(fmt.Sprintf("IPTC tag:%v, type:'time', value:%v\n", fieldID, recordReader.ReadTime()))
 					}
 					//if fieldID == tagID2Find {
 					//	if field.fieldTypeID == IptcFieldTypeShort {

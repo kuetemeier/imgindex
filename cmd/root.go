@@ -18,7 +18,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,8 +30,11 @@ import (
 
 var cfgFile string
 
-var version = "0.1.0"
-var appName = "imgindex"
+// Application version as in RootCmd.version
+const version = "0.1.0"
+
+// AppName is the string representation of the application Name
+const AppName = "ImgIndex"
 
 // any approach to require this configuration into your program.
 var yamlDefaultConfig = []byte(`
@@ -65,11 +67,18 @@ eyes : brown
 beard: true
 `)
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   appName,
-	Short: "Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.",
-	Long: `Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.
+type tField struct {
+	Name     string `mapstructure:"name"`
+	Type     string `mapstructure:"type"`
+	ID       string `mapstructure:"id"`
+	NewField string
+}
+
+// RootCmd represents the base command when called without any subcommands
+var RootCmd = &cobra.Command{
+	Use:   AppName,
+	Short: "ImgIndex - Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.",
+	Long: `ImgIndex - Image meta data (EXIF, IPTC, XMP) crawler and indexer (to JSON), written in GO.
 
 	It collects given (configured) fields of meta data from images stored in a directory
 	structure and writes them to a central JSON files.
@@ -86,8 +95,8 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+	if err := RootCmd.Execute(); err != nil {
+		log.Fatal(err)
 		os.Exit(1)
 	}
 }
@@ -98,44 +107,30 @@ func init() {
 
 	// set config defaults
 
-	rootCmd.Version = version
+	RootCmd.Version = version
 
-	/*viper.SetDefault("input", "STDIN")
-	viper.SetDefault("output", "STDOUT")
-	viper.SetDefault("outputFormat", "rss")*/
+	viper.SetDefault("fields", []tField{})
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.imgindex.yaml)")
+	RootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "config file (default is $HOME/.imgindex.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 
 	viper.SetDefault("verbose", false)
-	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose, print additional informations")
-	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
+	RootCmd.PersistentFlags().BoolP("verbose", "v", false, "Verbose, print additional informations")
+	viper.BindPFlag("verbose", RootCmd.PersistentFlags().Lookup("verbose"))
 
 	viper.SetDefault("silent", false)
-	rootCmd.PersistentFlags().BoolP("silent", "s", false, "Silent no output, only errors")
-	viper.BindPFlag("silent", rootCmd.PersistentFlags().Lookup("silent"))
+	RootCmd.PersistentFlags().BoolP("silent", "s", false, "Silent no output, only errors")
+	viper.BindPFlag("silent", RootCmd.PersistentFlags().Lookup("silent"))
 
 	viper.SetDefault("debug", false)
-	rootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug, print additional and debug informations")
-	viper.BindPFlag("debug", rootCmd.PersistentFlags().Lookup("debug"))
-
-	//rootCmd.PersistentFlags().StringP("input", "i", "STDIN", "Input source (STDIN, File, URL) to read rss feed from")
-	//rootCmd.PersistentFlags().StringP("output", "o", "STDOUT", "Output destination to write the new rss stream")
-	//rootCmd.PersistentFlags().StringP("outputFormat", "f", "rss", "Output format (rss, atom or json)")
-
-	//rootCmd.PersistentFlags().StringP("count", "c", "-1", "Max numbers of feed entries in the output feed (-1 = infinate/same as input)")
-
-	//viper.BindPFlag("input", rootCmd.PersistentFlags().Lookup("input"))
-	//viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
-	//viper.BindPFlag("outputFormat", rootCmd.PersistentFlags().Lookup("outputFormat"))
-
-	//viper.BindPFlag("count", rootCmd.PersistentFlags().Lookup("count"))
+	RootCmd.PersistentFlags().BoolP("debug", "d", false, "Debug, print additional and debug informations")
+	viper.BindPFlag("debug", RootCmd.PersistentFlags().Lookup("debug"))
 
 }
 
@@ -151,7 +146,7 @@ func initConfig() {
 		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 			os.Exit(1)
 		}
 
@@ -182,7 +177,7 @@ func initConfig() {
 	}
 	if viper.GetBool("verbose") || viper.GetBool("debug") {
 		log.SetLevel(log.InfoLevel)
-		log.Info("Verbose mode: on - using " + appName + " version " + rootCmd.Version)
+		log.Info("Verbose mode: on - using " + AppName + " version " + RootCmd.Version)
 
 		if err == nil {
 			log.Info("Using config file:", viper.ConfigFileUsed())
@@ -208,7 +203,8 @@ func initLog() {
 
 	// Output to stdout instead of the default stderr
 	// Can be any io.Writer, see below for File example
-	log.SetOutput(os.Stdout)
+	//log.SetOutput(os.Stdout)
+	log.SetOutput(RootCmd.OutOrStdout())
 
 	// Only log the warning severity or above.
 	log.SetLevel(log.WarnLevel)
@@ -217,16 +213,13 @@ func initLog() {
 // configures the logging system dynamically with custom config settings
 func configureLog() {
 	//log.SetFormatter(&log.JSONFormatter{})
+
+	// double - here and in initLog - configureLog is called AFTER the init process
+	log.SetOutput(RootCmd.OutOrStdout())
 	log.SetLevel(log.InfoLevel)
 }
 
 func processConfig() {
-	type tField struct {
-		Name     string `mapstructure:"name"`
-		Type     string `mapstructure:"type"`
-		ID       string `mapstructure:"id"`
-		NewField string
-	}
 
 	//type tFields []tField
 	type tFields struct {
@@ -236,8 +229,6 @@ func processConfig() {
 	//var fieldList tField
 	fieldList := make([]tField, 0)
 
-	//fmt.Println("%v", viper.Get("fields"))
-
 	log.Debugf("fiels: %v", viper.Get("fields"))
 	log.Debugln()
 
@@ -246,13 +237,11 @@ func processConfig() {
 		log.Fatal("unable to decode 'fields' configuration into struct:", err)
 	}
 
-	var f tField
-	f = fieldList[0]
+	if len(fieldList) > 0 {
+		var f tField
+		f = fieldList[0]
 
-	log.Debug("fieldList:", fieldList)
-
-	log.Debug("f: %v", f.ID)
-
-	//mt.Println("%v", viper.Get("fields"))
-
+		log.Debug("fieldList:", fieldList)
+		log.Debug("f: %v", f.ID)
+	}
 }

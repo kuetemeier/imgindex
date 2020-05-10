@@ -10,7 +10,6 @@ require (
 	github.com/onsi/ginkgo v1.12.0
 	github.com/onsi/gomega v1.10.0
 	github.com/pelletier/go-toml v1.7.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/afero v1.2.2 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
