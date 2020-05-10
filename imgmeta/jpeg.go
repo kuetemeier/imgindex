@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/apex/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // ============================================== JPEG ==============================================
