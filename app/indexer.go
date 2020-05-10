@@ -24,47 +24,47 @@ import (
 	"path/filepath"
 
 	meta "github.com/kuetemeier/imgmeta/app/meta"
-	"github.com/rwcarlsen/goexif/exif"
-	"github.com/spf13/viper"
-	"github.com/tidwall/gjson"
+	//"github.com/rwcarlsen/goexif/exif"
 )
 
 // Index start the index process
 func Index() {
 
-	os.Exit(0)
+	/*
+		os.Exit(0)
 
-	var err error
-	var imgFile *os.File
-	var metaData *exif.Exif
-	var jsonByte []byte
-	var jsonString string
+		var err error
+		var imgFile *os.File
+		var metaData *exif.Exif
+		var jsonByte []byte
+		var jsonString string
 
-	if viper.GetBool("verbose") {
-		fmt.Println("INFO: Starting index.")
-	}
+		if viper.GetBool("verbose") {
+			fmt.Println("INFO: Starting index.")
+		}
 
-	imgFile, err = os.Open("sample/the-wall-sample.jpg")
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+		imgFile, err = os.Open("sample/the-wall-sample.jpg")
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	metaData, err = exif.Decode(imgFile)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+		metaData, err = exif.Decode(imgFile)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	jsonByte, err = metaData.MarshalJSON()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+		jsonByte, err = metaData.MarshalJSON()
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-	jsonString = string(jsonByte)
-	fmt.Println(jsonString)
+		jsonString = string(jsonByte)
+		fmt.Println(jsonString)
 
-	fmt.Println("Make: " + gjson.Get(jsonString, "Make").String())
-	fmt.Println("Model: " + gjson.Get(jsonString, "Model").String())
-	fmt.Println("Software: " + gjson.Get(jsonString, "Software").String())
+		fmt.Println("Make: " + gjson.Get(jsonString, "Make").String())
+		fmt.Println("Model: " + gjson.Get(jsonString, "Model").String())
+		fmt.Println("Software: " + gjson.Get(jsonString, "Software").String())
+	*/
 
 	fhnd, err := os.Open("sample/the-wall-sample.jpg")
 	if err != nil {
