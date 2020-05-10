@@ -6,6 +6,12 @@
 
 You can use this JSON file e.g. as a data source in [HUGO](http://gohugo.io/) websites.
 
+## WARNING - work in progress
+
+A little warning. This is a pre-alpha version, and heavy work in progess.
+
+If you would like to join and help me, just send me a message / email.
+
 ## License
 
 Copyright © 2020 Jörg Kütemeier <joerg@kuetemeier.de>
