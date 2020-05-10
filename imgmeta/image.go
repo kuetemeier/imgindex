@@ -1,6 +1,8 @@
 package imgmeta
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,7 +18,7 @@ type Image struct {
 func (i Image) ReadTagValue(appname string, tagID uint16) (value interface{}, err error) {
 	app, exists := i.apps[appname]
 	if !exists {
-		log.Error("Image does not have '%s' meta section\n", appname)
+		log.Error(fmt.Sprintf("Image does not have '%s' meta section\n", appname))
 		return nil, nil
 	}
 	value, err = app.ReadValue(tagID)

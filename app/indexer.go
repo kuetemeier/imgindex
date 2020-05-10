@@ -18,6 +18,7 @@ limitations under the License.
 package app
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -41,9 +42,9 @@ func Index() {
 	}
 
 	basicInfo := GetBasicInfo(image)
-	log.Info("Title: %v", basicInfo.Title)
-	log.Info("Image: width:%v, height:%v\n", basicInfo.Width, basicInfo.Height)
-	log.Info("Keywords: %v\n", basicInfo.Keywords)
+	log.Info(fmt.Sprintf("Title: %v", basicInfo.Title))
+	log.Info(fmt.Sprintf("Image: width: %v, height: %v", basicInfo.Width, basicInfo.Height))
+	log.Info(fmt.Sprintf("Keywords: %v", basicInfo.Keywords))
 
 }
 

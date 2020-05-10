@@ -1,6 +1,8 @@
 package imgmeta
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -33,7 +35,7 @@ func GetBasicInfo(img Image) (info BasicInfo) {
 	}
 	datetime, err := img.ReadTagValue("EXIF", ExifTagDateTimeOriginal)
 	if err == nil {
-		log.Error("datetime:%v\n", datetime)
+		log.Error(fmt.Sprintf("datetime:%v\n", datetime))
 	}
 	//height, err := img.ReadTagValue("IPTC", IptcTagApplication2Keywords)
 	//if err == nil {

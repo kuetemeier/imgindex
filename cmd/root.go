@@ -18,6 +18,7 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -241,7 +242,7 @@ func processConfig() {
 		var f tField
 		f = fieldList[0]
 
-		log.Debug("fieldList:", fieldList)
-		log.Debug("f: %v", f.ID)
+		log.Debug(fmt.Sprintf("fieldList: %v", fieldList))
+		log.Debug(fmt.Sprintf("f: %v", f.ID))
 	}
 }
