@@ -1,5 +1,5 @@
-source: ./sample
-destination: ./sample/imgindex.json
+source: .
+destination: ./imgindex.json
 fields:
 -
   name: file
